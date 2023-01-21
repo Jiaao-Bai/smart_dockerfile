@@ -1,0 +1,20 @@
+FROM ubuntu:22.04
+
+ENV http_proxy  http://127.0.0.1:7890
+ENV https_proxy http://127.0.0.1:7890
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends wget git ca-certificates build-essential gcc \
+     && update-ca-certificates
+RUN wget --no-check-certificate https://github.com/neovim/neovim/releases/download/v0.8.0/nvim-linux64.tar.gz
+RUN tar -zxvf nvim-linux64.tar.gz
+RUN cd nvim-linux64 && cp -r ./* /usr/local/
+RUN echo "alias v='nvim'" >> ~/.bashrc
+
+RUN mkdir ~/.config && cd ~/.config/  \
+      && git clone https://github.com/Jiaao-Bai/smart_neovim_config.git \
+       && mv smart_neovim_config nvim
+
+RUN git clone --depth 1 https://github.com/wbthomason/packer.nvim\
+      ~/.local/share/nvim/site/pack/packer/start/packer.nvim
+
